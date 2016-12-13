@@ -26,6 +26,9 @@ the_usage="usage: `basename $0`[find_sus_pid sus_port|kill_sus sus_port|start_su
 #enforce execution stauts check
 set -x
 
+#ps -ef | grep $ps_keyward_sus to find the running process for sus server
+ps_keyward_sus=sus.jar
+
 #skip user confirmation
 skip_user_confirmation=n
 
@@ -164,7 +167,7 @@ get_user_confirmation(){
 	fi
 }
 
-#kill the process for SocketUtilApp for the port (port of the process is unique), $1 - the sus_port, exit 0 when success.
+#kill the process for $ps_keyward_sus for the port (port of the process is unique), $1 - the sus_port, exit 0 when success.
 kill_sus() {
 	local method_name
 	local sus_port
@@ -201,7 +204,7 @@ kill_sus() {
 	
 }
 
-#find the process id for the SocketUtilApp for the port, $1 - the sus_port, return 0 and set the sus_pid shared variable, return 2 otherwise.
+#find the process id for the $ps_keyward_sus for the port, $1 - the sus_port, return 0 and set the sus_pid shared variable, return 2 otherwise.
 find_sus_pid() {
 	local method_name
 
@@ -213,9 +216,9 @@ find_sus_pid() {
 
 	sus_port=$1
     log_info $method_name "finding sus_pid for port: $sus_port"
-    ps -ef | grep "SocketUtilApp" | grep "$sus_port"
+    ps -ef | grep "$ps_keyward_sus" | grep "$sus_port"
 	#setting the global shared variables
-    sus_pid=`ps -ef | grep "SocketUtilApp" | grep "$sus_port" | awk -F " " '{print $2}'`
+    sus_pid=`ps -ef | grep "$ps_keyward_sus" | grep "$sus_port" | awk -F " " '{print $2}'`
 	
 	if [ "" == "$sus_pid" ] ; then
 		log_error $method_name "not found sus_pid for port: $sus_port"
@@ -267,13 +270,13 @@ start_sus() {
 	
 	log_info $method_name "after sus_jar_path=$sus_jar_path"
 	log_info $method_name "ps before start sus for sus_port: $sus_port"
-    ps -ef | grep "SocketUtilApp" | grep "$sus_port"
+    ps -ef | grep "$ps_keyward_sus" | grep "$sus_port"
 	
 	log_info $method_name "going to start sus server with user: $sus_user on port: $sus_port"
 	nohup ${java_executable_path} -DsecretKeyFile=${sus_skey_file} -jar ${sus_jar_path} server ${sus_port} ${sus_dir} >> ${sus_log_file} 2>&1 &
 
     log_info $method_name "ps after start sus for sus_port: $sus_port"
-    ps -ef | grep "SocketUtilApp" | grep "$sus_port"
+    ps -ef | grep "$ps_keyward_sus" | grep "$sus_port"
 	
 	return_value $method_name 0
 	
