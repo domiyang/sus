@@ -1,0 +1,12 @@
+#specify the language
+language: java
+
+#test across those jdk version
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+  - openjdk7
+  - openjdk6
+
+#the trigger with maven
+mvn test
