@@ -7,6 +7,3 @@ jdk:
   - oraclejdk7
   - openjdk7
   - openjdk6
-
-#the trigger with maven
-mvn test
