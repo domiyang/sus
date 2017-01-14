@@ -42,6 +42,7 @@ import org.junit.Test;
 
 /**
  * This is the unit test impl for SocketUtilApp.
+ * 
  * @author Domi Yang
  *
  */
@@ -59,15 +60,17 @@ public class SocketUtilAppTest {
 	static String serverPort4 = "1985";
 	static String serverIp4 = "localhost";
 
-	static String sKeyFile = "d:/tools/sus/test/my_key.txt";
+	static String test_dir_root = "./target/test_dir";
+	
+	static String sKeyFile = test_dir_root + "/my_key.txt";
 
-	static String fileClient = "d:/tools/sus/test/test1.txt";
-	static String fileClient2 = "d:/tools/sus/test/test2.txt";
-	static String dirDest = "d:/tools/sus/test/dirDest";
-	static String dirServer = "d:/tools/sus/test/dir_server";
-	static String dirServer2 = "d:/tools/sus/test/dir_server1";
-	static String dirServer3 = "d:/tools/sus/test/dir_server3";
-	static String dirServer4 = "d:/tools/sus/test/dir_server4";
+	static String fileClient = test_dir_root + "/test1.txt";
+	static String fileClient2 = test_dir_root + "/test2.txt";
+	static String dirDest = test_dir_root + "/dirDest";
+	static String dirServer = test_dir_root + "/dir_server";
+	static String dirServer2 = test_dir_root + "/dir_server1";
+	static String dirServer3 = test_dir_root + "/dir_server3";
+	static String dirServer4 = test_dir_root + "/dir_server4";
 
 	static boolean serverStarted = false;
 	static boolean serverStarted2 = false;
@@ -94,6 +97,29 @@ public class SocketUtilAppTest {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		File file = new File(test_dir_root);
+		deleteWholeDirectory(file);
+	}
+
+	private static void deleteWholeDirectory(File file) {
+		String METHOD_NAME = "deleteWholeDirectory(...)";
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				File[] fileArr = file.listFiles();
+				for (File subFile : fileArr) {
+					deleteWholeDirectory(subFile);
+				}
+				
+				boolean deleted = file.delete();
+				String dirName = file.getName();
+				SocketUtilApp.logInfo(METHOD_NAME, "dir/deleted=" + dirName + "/" + Boolean.toString(deleted));
+				
+			} else {
+				boolean deleted = file.delete();
+				String fileName = file.getName();
+				SocketUtilApp.logInfo(METHOD_NAME, "file/deleted=" + fileName + "/" + Boolean.toString(deleted));
+			}
+		}
 	}
 
 	@Before
@@ -294,7 +320,8 @@ public class SocketUtilAppTest {
 		String testFile = fileClient;
 		String targetFileFolder = dirServer4;
 
-		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT, serverIp4 + SocketUtilApp.IP_PORT_DELIMETER + serverPort4, testFile };
+		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT,
+				serverIp4 + SocketUtilApp.IP_PORT_DELIMETER + serverPort4, testFile };
 		sendFileToServerAndVerify(testFile, targetFileFolder, args, !clientWithSKey);
 	}
 
@@ -306,7 +333,8 @@ public class SocketUtilAppTest {
 		String testFile = fileClient;
 		String targetFileFolder = dirServer;
 
-		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT, serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort, testFile };
+		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT,
+				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort, testFile };
 		sendFileToServerAndVerify(testFile, targetFileFolder, args);
 
 	}
@@ -320,7 +348,8 @@ public class SocketUtilAppTest {
 		String targetDirDest = dirDest;
 		String targetFileFolder = targetDirDest != null ? targetDirDest : dirServer;
 
-		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT, serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort, testFile, targetDirDest };
+		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT,
+				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort, testFile, targetDirDest };
 		sendFileToServerAndVerify(testFile, targetFileFolder, args);
 
 	}
@@ -345,7 +374,8 @@ public class SocketUtilAppTest {
 		String targetFileFolder = dirServer4;
 
 		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT,
-				serverIp3 + SocketUtilApp.IP_PORT_DELIMETER + serverPort3 + SocketUtilApp.ROUTER_ENTRY_DELIMETER + serverIp4 + SocketUtilApp.IP_PORT_DELIMETER + serverPort4,
+				serverIp3 + SocketUtilApp.IP_PORT_DELIMETER + serverPort3 + SocketUtilApp.ROUTER_ENTRY_DELIMETER
+						+ serverIp4 + SocketUtilApp.IP_PORT_DELIMETER + serverPort4,
 				testFile };
 		sendFileToServerAndVerify(testFile, targetFileFolder, args, !clientWithSKey);
 	}
@@ -360,7 +390,8 @@ public class SocketUtilAppTest {
 		String targetFileFolder = dirServer2;
 
 		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT,
-				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort + SocketUtilApp.ROUTER_ENTRY_DELIMETER + serverIp2 + SocketUtilApp.IP_PORT_DELIMETER + serverPort2,
+				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort + SocketUtilApp.ROUTER_ENTRY_DELIMETER
+						+ serverIp2 + SocketUtilApp.IP_PORT_DELIMETER + serverPort2,
 				testFile };
 		sendFileToServerAndVerify(testFile, targetFileFolder, args);
 	}
@@ -376,7 +407,8 @@ public class SocketUtilAppTest {
 		String targetFileFolder = targetDirDest != null ? targetDirDest : dirServer;
 
 		String[] args = new String[] { SocketUtilApp.MODE_FT_CLIENT,
-				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort + SocketUtilApp.ROUTER_ENTRY_DELIMETER + serverIp2 + SocketUtilApp.IP_PORT_DELIMETER + serverPort2,
+				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort + SocketUtilApp.ROUTER_ENTRY_DELIMETER
+						+ serverIp2 + SocketUtilApp.IP_PORT_DELIMETER + serverPort2,
 				testFile, targetDirDest };
 		sendFileToServerAndVerify(testFile, targetFileFolder, args);
 	}
@@ -385,7 +417,8 @@ public class SocketUtilAppTest {
 		sendFileToServerAndVerify(testFile, serverDir, args, false);
 	}
 
-	private void sendFileToServerAndVerify(String testFile, String serverDir, String[] args, boolean accessDeniedExpected) {
+	private void sendFileToServerAndVerify(String testFile, String serverDir, String[] args,
+			boolean accessDeniedExpected) {
 		final String METHOD_NAME = "sendFileToServerAndVerify(...)";
 
 		String fileStrServer = null;
@@ -449,7 +482,8 @@ public class SocketUtilAppTest {
 		shouldCreateServer4(true);
 		handleSKeyProperty(clientWithSKey);
 
-		String[] args = new String[] { SocketUtilApp.MODE_CMD_CLIENT, serverIp4 + SocketUtilApp.IP_PORT_DELIMETER + serverPort4, cmdClient };
+		String[] args = new String[] { SocketUtilApp.MODE_CMD_CLIENT,
+				serverIp4 + SocketUtilApp.IP_PORT_DELIMETER + serverPort4, cmdClient };
 		try {
 			String response = SocketUtilApp.startProcess(args);
 
@@ -471,7 +505,8 @@ public class SocketUtilAppTest {
 
 		shouldCreateServer(false);
 
-		String[] args = new String[] { SocketUtilApp.MODE_CMD_CLIENT, serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort, cmdClient };
+		String[] args = new String[] { SocketUtilApp.MODE_CMD_CLIENT,
+				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort, cmdClient };
 		String response = SocketUtilApp.startProcess(args);
 
 		SocketUtilApp.logInfo(METHOD_NAME, "response=" + response);
@@ -496,7 +531,8 @@ public class SocketUtilAppTest {
 		handleSKeyProperty(clientWithSKey);
 
 		String[] args = new String[] { SocketUtilApp.MODE_CMD_CLIENT,
-				serverIp3 + SocketUtilApp.IP_PORT_DELIMETER + serverPort3 + SocketUtilApp.ROUTER_ENTRY_DELIMETER + serverIp4 + SocketUtilApp.IP_PORT_DELIMETER + serverPort4,
+				serverIp3 + SocketUtilApp.IP_PORT_DELIMETER + serverPort3 + SocketUtilApp.ROUTER_ENTRY_DELIMETER
+						+ serverIp4 + SocketUtilApp.IP_PORT_DELIMETER + serverPort4,
 				cmdClient };
 		try {
 			String response = SocketUtilApp.startProcess(args);
@@ -522,7 +558,8 @@ public class SocketUtilAppTest {
 		shouldCreateServer2(false);
 
 		String[] args = new String[] { SocketUtilApp.MODE_CMD_CLIENT,
-				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort + SocketUtilApp.ROUTER_ENTRY_DELIMETER + serverIp2 + SocketUtilApp.IP_PORT_DELIMETER + serverPort2,
+				serverIp + SocketUtilApp.IP_PORT_DELIMETER + serverPort + SocketUtilApp.ROUTER_ENTRY_DELIMETER
+						+ serverIp2 + SocketUtilApp.IP_PORT_DELIMETER + serverPort2,
 				cmdClient };
 		String response = SocketUtilApp.startProcess(args);
 
